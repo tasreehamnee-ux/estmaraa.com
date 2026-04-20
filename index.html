@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>استمارة منح تخويل عجلات الموظفين</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @page {
+            size: A4;
+            margin: 10mm;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: #c0c0c0;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            word-break: keep-all;
+            word-wrap: normal;
+            overflow-wrap: normal;
+        }
+
+        .form-container {
+            width: 190mm;
+            min-height: 277mm;
+            max-height: 277mm;
+            background: white;
+            position: relative;
+            box-shadow: 0 0 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+            padding: 0;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: linear-gradient(180deg, #4a5d7a 0%, #3a4d6a 50%, #2a3d5a 100%);
+            height: 90px;
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 8px 15px;
+            position: relative;
+            border-bottom: 3px solid #8b1538;
+            border-radius: 0 0 12px 12px;
+            margin: 0 2px;
+            flex-shrink: 0;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            right: 4px;
+            bottom: 4px;
+            border: 1.5px dashed rgba(255,255,255,0.4);
+            border-radius: 0 0 10px 10px;
+            pointer-events: none;
+        }
+
+        .header-en {
+            text-align: left;
+            line-height: 1.3;
+            z-index: 2;
+            direction: ltr;
+        }
+
+        .header-en div {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            color: white;
+        }
+
+        .header-ar {
+            text-align: right;
+            line-height: 1.3;
+            z-index: 2;
+            direction: rtl;
+        }
+
+        .header-ar div {
+            font-size: 12px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .logo-container {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 8px;
+            z-index: 10;
+        }
+
+        .logo-img {
+            width: 70px;
+            height: 70px;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+        .form-title {
+            text-align: center;
+            padding: 4px;
+            margin: 3px 15px 2px 15px;
+            border-bottom: 2px solid #ccc;
+            flex-shrink: 0;
+        }
+
+        .form-title h1 {
+            font-size: 15px;
+            font-weight: 800;
+            color: #333;
+            letter-spacing: 0.5px;
+            text-align: center;
+            word-break: keep-all;
+            white-space: nowrap;
+        }
+
+        .content {
+            padding: 10px 20px 5px 20px;
+            position: relative;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .watermark-container {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+            opacity: 0.06;
+            pointer-events: none;
+            width: 70%;
+            height: 70%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .watermark-logo {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        .top-section {
+            display: flex;
+            flex-direction: row-reverse;
+            gap: 10px;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+            flex-shrink: 0;
+        }
+
+        .photo-box {
+            width: 75px;
+            height: 95px;
+            border: 2px solid #333;
+            background: #f8f8f8;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .photo-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .photo-input {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .photo-preview {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        .fields-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding-top: 1px;
+        }
+
+        .field-row {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            width: 100%;
+        }
+
+        .field-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #333;
+            white-space: nowrap;
+            word-break: keep-all;
+        }
+
+        .field-input {
+            border: 2px solid #333;
+            background: white;
+            padding: 2px 5px;
+            font-family: 'Cairo', sans-serif;
+            border-radius: 7px;
+            font-size: 14px;
+            height: 28px;
+            text-align: center;
+            word-break: keep-all;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .field-input:focus {
+            outline: none;
+            border-color: #2a3d5a;
+        }
+
+        .row-fullname .field-input, .row-department .field-input {
+            flex: 1;
+            width: auto;
+        }
+
+        .row-job-mobile {
+            display: flex;
+            gap: 12px;
+        }
+
+        .job-group, .mobile-group {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            flex: 1;
+        }
+
+        .job-group .field-input, .mobile-group .field-input {
+            flex: 1;
+            width: auto;
+        }
+
+        .vehicle-row {
+            display: flex;
+            gap: 2px;
+            border-radius: 6px;
+            margin: 4px 0;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .vehicle-group {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            flex: 1;
+        }
+
+        .vehicle-group .field-label {
+            font-size: 10px;
+            word-break: keep-all;
+        }
+
+        .vehicle-group .field-input {
+            flex: 1;
+            height: 22px;
+            min-width: 45px;
+            border-radius: 8px;
+            font-size: 10px;
+            text-align: center;
+            word-break: keep-all;
+        }
+
+        .chassis-row {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin: 6px 0;
+            flex-shrink: 0;
+        }
+
+        .chassis-row .field-input {
+            flex: 1;
+            width: auto;
+        }
+
+        .auth-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 6px 0;
+            padding: 2px 0;
+            flex-shrink: 0;
+        }
+
+        .auth-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: #333;
+            word-break: keep-all;
+        }
+
+        .auth-options {
+            display: flex;
+            gap: 15px;
+        }
+
+        .auth-option {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .auth-option input[type="checkbox"] {
+            width: 14px;
+            height: 14px;
+            border: 2px solid #333;
+            cursor: pointer;
+        }
+
+        .auth-option label {
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            word-break: keep-all;
+        }
+
+        /* تنسيق جديد للملاحظة والصندوق */
+        .notice-section {
+            width: 95%;
+            margin: 4px auto 4px auto;
+            flex-shrink: 0;
+        }
+
+        .notice-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: #333;
+            text-align: center;
+            margin-bottom: 2px;
+            word-break: keep-all;
+            unicode-bidi: normal;
+            direction: rtl;
+        }
+
+        .notice-label strong {
+            font-weight: 800;
+        }
+
+        .scope-input {
+            width: 100%;
+            height: 24px;
+            border: 2px solid #333;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 600;
+            background: white;
+            word-break: keep-all;
+            display: block;
+        }
+
+        .signatures-row {
+            display: flex;
+            gap: 14px;
+            border-radius: 8px;
+            margin: 6px auto;
+            flex-shrink: 0;
+            width: 85%;
+        }
+
+        .signature-box {
+            flex: 1;
+            border: 2px solid #666;
+            min-height: 90px;
+            padding: 5px;
+            background: transparent;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border-radius: 6px;
+            position: relative;
+        }
+
+        .signature-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-align: center;
+            color: #333;
+            line-height: 1.2;
+            unicode-bidi: normal;
+            direction: rtl;
+            background: rgba(255,255,255,0.7);
+            padding: 1px 4px;
+            border-radius: 8px;
+            display: inline-block;
+            word-break: keep-all;
+        }
+
+        .full-signature {
+            min-height: 90px;
+            padding: 5px;
+            margin: 8px auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 42%;
+            border-radius: 8px;
+            flex-shrink: 0;
+            background: transparent;
+            border: 2px solid #666;
+        }
+
+        .requirements {
+            margin-top: 6px;
+            padding: 3px 0;
+            flex-shrink: 0;
+            margin-bottom: 0;
+        }
+
+        .requirements-title {
+            font-size: 13px;
+            font-weight: 800;
+            margin-bottom: 2px;
+            color: #333;
+            text-align: right;
+            word-break: keep-all;
+        }
+
+        .requirements ol {
+            padding: 0;
+            margin: 0;
+            font-size: 13px;
+            line-height: 1.3;
+            color: #333;
+            list-style: none;
+            counter-reset: item;
+        }
+
+        .requirements li {
+            margin-bottom: 2px;
+            text-align: right;
+            position: relative;
+            padding-right: 20px;
+            counter-increment: item;
+            unicode-bidi: normal;
+            direction: rtl;
+            word-break: keep-all;
+        }
+
+        .requirements li::before {
+            content: counter(item) "-";
+            position: absolute;
+            right: 0;
+            font-weight: 700;
+        }
+
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 20px;
+            font-size: 8px;
+            color: #666;
+            border-top: 1px solid #ddd;
+            flex-shrink: 0;
+            margin-top: 0;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+            background: rgba(255,255,255,0.95);
+            padding: 12px 25px;
+            border-radius: 50px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+
+        .btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 25px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-pdf {
+            background: linear-gradient(145deg, #2a3d5a 0%, #1a2d4a 100%);
+            color: white;
+        }
+
+        .btn-print {
+            background: #5a6a7a;
+            color: white;
+        }
+
+        .btn-clear {
+            background: #8b1538;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+            }
+            .form-container {
+                box-shadow: none;
+                width: 190mm;
+                height: 277mm;
+                min-height: 277mm;
+                max-height: 277mm;
+                margin: 10mm auto;
+                page-break-after: avoid;
+                page-break-inside: avoid;
+                overflow: hidden;
+            }
+            html, body {
+                height: 277mm;
+                overflow: hidden;
+            }
+            .controls {
+                display: none !important;
+            }
+            .content {
+                height: auto;
+                overflow: hidden;
+                padding: 10px 20px 5px 20px;
+            }
+            .footer {
+                position: relative;
+                margin-top: 0;
+                padding: 4px 20px;
+            }
+            .signatures-row, .requirements {
+                page-break-inside: avoid;
+            }
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            .form-title h1 {
+                text-align: center !important;
+            }
+        }
+
+        .pdf-export .controls {
+            display: none !important;
+        }
+
+        .bidi-fix {
+            unicode-bidi: bidi-override;
+            direction: rtl;
+        }
+
+        .form-title h1 {
+            font-feature-settings: normal !important;
+            -webkit-font-feature-settings: normal !important;
+        }
+    </style>
+<base target="_blank">
+<base target="_blank">
+</head>
+<body>
+    <div class="form-container" id="form">
+        <div class="header">
+            <div class="header-en">
+                <div>Republic Of Iraq</div>
+                <div>Ministry Of Youth & Sport</div>
+                <div>Minister Office</div>
+                <div>Security Permits Department</div>
+            </div>
+
+            <div class="logo-container">
+                <img src="imag.jpg" alt="Logo" class="logo-img">
+            </div>
+
+            <div class="header-ar">
+                <div>جمهورية العراق</div>
+                <div>وزارة الشباب والرياضة</div>
+                <div>مكتب الوزير</div>
+                <div>قسم التصاريح الامنية</div>
+            </div>
+        </div>
+
+        <div class="form-title">
+            <h1>استمارة منح تخويل عجلات الموظفين</h1>
+        </div>
+
+        <div class="content">
+            <div class="watermark-container">
+                <img src="imag.jpg" alt="" class="watermark-logo">
+            </div>
+
+            <div class="top-section">
+                <div class="photo-box">
+                    <div class="photo-label">صورة شخصية</div>
+                    <input type="file" class="photo-input" accept="image/*" onchange="loadPhoto(this)">
+                    <img class="photo-preview" id="photoPreview">
+                </div>
+
+                <div class="fields-area">
+                    <div class="field-row row-fullname">
+                        <label class="field-label">اسم الرباعي واللقب</label>
+                        <input type="text" class="field-input">
+                    </div>
+
+                    <div class="field-row row-department">
+                        <label class="field-label">اسم الدائرة</label>
+                        <input type="text" class="field-input">
+                    </div>
+
+                    <div class="row-job-mobile">
+                        <div class="job-group">
+                            <label class="field-label">العنوان الوظيفي</label>
+                            <input type="text" class="field-input">
+                        </div>
+                        <div class="mobile-group">
+                            <label class="field-label">رقم الموبايل</label>
+                            <input type="text" class="field-input">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="vehicle-row">
+                <div class="vehicle-group">
+                    <label class="field-label">نوع العجلة</label>
+                    <input type="text" class="field-input">
+                </div>
+                <div class="vehicle-group">
+                    <label class="field-label">لون العجلة</label>
+                    <input type="text" class="field-input">
+                </div>
+                <div class="vehicle-group">
+                    <label class="field-label">سنة الصنع</label>
+                    <input type="text" class="field-input">
+                </div>
+                <div class="vehicle-group">
+                    <label class="field-label">رقم العجلة</label>
+                    <input type="text" class="field-input">
+                </div>
+            </div>
+
+            <div class="chassis-row">
+                <label class="field-label">رقم الشاصي</label>
+                <input type="text" class="field-input">
+            </div>
+
+            <div class="auth-section">
+                <label class="auth-label">نوع تخويل العجـــلـــــة </label>
+                <div class="auth-options">
+                    <div class="auth-option">
+                        <input type="checkbox" id="govt" onclick="toggleAuth('govt')">
+                        <label for="govt">حكومي</label>
+                    </div>
+                    <div class="auth-option">
+                        <input type="checkbox" id="private" onclick="toggleAuth('private')">
+                        <label for="private">خصوصي</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- تنسيق جديد: الملاحظة فوق الصندوق مباشرة -->
+            <div class="notice-section">
+                <div class="notice-label">
+                    <strong>ملاحظة:</strong> نطاق سير العجلة الحكومية ونوع الواجب والمهام يتم تحديده من قبل (مديرعام الدائرة المعنية وبالقلم الخاص بالتوقيع)
+                </div>
+                <input type="text" class="scope-input" placeholder="=" readonly>
+            </div>
+
+            <div class="signatures-row">
+                <div class="signature-box">
+                    <div class="signature-title">توقيع صاحب الطلب</div>
+                    <div class="signature-line"></div>
+                </div>
+                <div class="signature-box">
+                    <div class="signature-title">ختم وتوقيع مديرعام دائرة الموظف</div>
+                    <div class="signature-line"></div>
+                </div>
+            </div>
+
+            <div class="signatures-row">
+                <div class="signature-box">
+                    <div class="signature-title"> ختم وتوقيع شعبة الاليات العجلة الحكومية  </div>
+                    <div class="signature-line"></div>
+                </div>
+                <div class="signature-box">
+                    <div class="signature-title">ختم وتوقيع مدير قسم التصاريح الامنية</div>
+                    <div class="signature-line"></div>
+                </div>
+            </div>
+
+            <div class="full-signature">
+                <div class="signature-title">توقيع مسؤول شعبة التصاريح</div>
+                <div class="signature-line"></div>
+            </div>
+
+            <div class="requirements">
+                <div class="requirements-title"> :ملاحظات</div>
+                <ol>
+                    <li>ارفاق كتاب رسمي من دائرة المستفيد ونسخه مصورة ملونة لكل من(هوية دائرة الموظف والمقبول الثاني + اجازة سوق + محضر استلام العجلة + سندية )العجلة.</li>
+                    <li>سوف يعمل طلب التخويل في حالة عدم ارفاق اي نسخه مذكورة في فقرة رقم (١) او في حالة نقص في توقيع الطلب.</li>
+                    <li>يكون استلام استمارة طلب التخويل من مكتب التصاريح الامنية حصراً.</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="footer">
+            <span>SPO-QP-03-03,01-27 JAN.2023</span>
+            <span>HS\m//R</span>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="btn btn-pdf" onclick="saveAsPDF()">📄 حفظ كـ PDF</button>
+        <button class="btn btn-print" onclick="exportPDF()">🖨️ طباعة / PDF</button>
+        <button class="btn btn-clear" onclick="clearForm()">🗑️ مسح</button>
+    </div>
+
+    <script>
+        function loadPhoto(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('photoPreview').src = e.target.result;
+                    document.getElementById('photoPreview').style.display = 'block';
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function toggleAuth(type) {
+            if (type === 'govt') {
+                document.getElementById('private').checked = false;
+            } else {
+                document.getElementById('govt').checked = false;
+            }
+        }
+
+        function exportPDF() {
+            const element = document.getElementById('form');
+            document.querySelector('.controls').style.display = 'none';
+            window.print();
+            setTimeout(() => {
+                document.querySelector('.controls').style.display = 'flex';
+            }, 1000);
+        }
+
+        function saveAsPDF() {
+            const element = document.getElementById('form');
+            element.classList.add('pdf-export');
+
+            const opt = {
+                margin: [10, 10, 10, 10],
+                filename: 'استمارة_تخويل_العجلات.pdf',
+                image: { type: 'jpeg', quality: 1 },
+                html2canvas: {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: '#ffffff',
+                    logging: false,
+                    width: 720,
+                    height: 1040,
+                    allowTaint: true,
+                    foreignObjectRendering: false,
+                    onclone: function(clonedDoc) {
+                        const allElements = clonedDoc.querySelectorAll('*');
+                        allElements.forEach(el => {
+                            el.style.wordBreak = 'keep-all';
+                            el.style.wordWrap = 'normal';
+                            el.style.overflowWrap = 'normal';
+                            if (el.textContent && /[\u0600-\u06FF]/.test(el.textContent)) {
+                                el.style.fontFamily = 'Cairo, Arial, sans-serif';
+                                el.style.letterSpacing = '0';
+                            }
+                        });
+
+                        const h1 = clonedDoc.querySelector('.form-title h1');
+                        if (h1) {
+                            h1.style.cssText = 'font-size: 15px; font-weight: 800; color: #333; text-align: center; font-family: Cairo, Arial, sans-serif; letter-spacing: 0; word-break: keep-all; white-space: nowrap;';
+                        }
+                    }
+                },
+                jsPDF: {
+                    unit: 'mm',
+                    format: 'a4',
+                    orientation: 'portrait',
+                    putOnlyUsedFonts: true,
+                    floatPrecision: 16
+                }
+            };
+
+            html2pdf().set(opt).from(element).save().then(() => {
+                element.classList.remove('pdf-export');
+            }).catch(err => {
+                console.error('Error:', err);
+                alert('حدث خطأ في حفظ PDF. يرجى استخدام خيار الطباعة');
+                element.classList.remove('pdf-export');
+            });
+        }
+
+        function clearForm() {
+            if(confirm('هل أنت متأكد من مسح جميع البيانات؟')) {
+                document.querySelectorAll('input[type="text"]').forEach(i => i.value = '');
+                document.querySelectorAll('input[type="checkbox"]').forEach(i => i.checked = false);
+                document.getElementById('photoPreview').style.display = 'none';
+                document.querySelector('.photo-input').value = '';
+            }
+        }
+    </script>
+</body>
+</html>
