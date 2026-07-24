@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #2a3d5a 0%, #1a2d4a 100%);
+            min-height: 100vh;
+            padding: 5px;
+        }
+
+        /* ===== CONTACT FORM STYLES ===== */
+        .contact-section {
+            max-width: 500px;
+            margin: 0 auto 30px auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #8b1538, #4a5d7a, #8b1538);
+        }
+
+        .contact-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .contact-header h2 {
+            font-size: 22px;
+            font-weight: 800;
+            color: #2a3d5a;
+            margin-bottom: 5px;
+        }
+
+        .contact-header p {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="tel"] {
+            width: 100%;
+            padding: 10px 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 14px;
+            transition: all 0.3s;
+            background: #f9f9f9;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #4a5d7a;
+            background: white;
+            box-shadow: 0 0 10px rgba(74, 93, 122, 0.1);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .checkbox-group {
+            display: flex;
+            gap: 20px;
+            margin: 15px 0;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #2a3d5a;
+        }
+
+        .checkbox-item label {
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            color: #333;
+        }
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #ddd, transparent);
+            margin: 20px 0;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 800;
+            color: #2a3d5a;
+            margin-bottom: 10px;
+            padding-right: 10px;
+            border-right: 3px solid #8b1538;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(145deg, #2a3d5a, #1a2d4a);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(42, 61, 90, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-success {
+            background: linear-gradient(145deg, #155724, #0d3b17);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(21, 87, 36, 0.4);
+        }
+
+        .success-message {
+            display: none;
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        /* ===== FORM DISPLAY SECTION (Hidden by default) ===== */
+        .form-display-section {
+            display: none;
+            margin-top: 5px;
+        }
+
+        .form-display-section.active {
+            display: block;
+        }
+
+        .form-display-title {
+            text-align: center;
+            color: white;
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        /* ===== ORIGINAL FORM STYLES ===== */
+        @page {
+            size: A4;
+            margin: 10mm;
+        }
+
+        .form-container {
+            width: 190mm;
+            min-height: 277mm;
+            max-height: 277mm;
+            background: white;
+            position: relative;
+            box-shadow: 0 0 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+            padding: 0;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: linear-gradient(180deg, #4a5d7a 0%, #3a4d6a 50%, #2a3d5a 100%);
+            height: 90px;
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 8px 15px;
+            position: relative;
+            border-bottom: 3px solid #8b1538;
+            border-radius: 0 0 12px 12px;
+            margin: 0 2px;
+            flex-shrink: 0;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            right: 4px;
+            bottom: 4px;
+            border: 1.5px dashed rgba(255,255,255,0.4);
+            border-radius: 0 0 10px 10px;
+            pointer-events: none;
+        }
+
+        .header-en {
+            text-align: left;
+            line-height: 1.3;
+            z-index: 2;
+            direction: ltr;
+        }
+
+        .header-en div {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            color: white;
+        }
+
+        .header-ar {
+            text-align: right;
+            line-height: 1.3;
+            z-index: 2;
+            direction: rtl;
+        }
+
+        .header-ar div {
+            font-size: 12px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .logo-container {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 8px;
+            z-index: 10;
+        }
+
+        .logo-img {
+            width: 70px;
+            height: 70px;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+        .form-title {
+            text-align: center;
+            padding: 2px;
+            margin: 1px 15px 2px 15px;
+            border-bottom: 2px solid #ccc;
+            flex-shrink: 0;
+        }
+
+        .form-title h1 {
+            font-size: 15px;
+            font-weight: 800;
+            color: #333;
+            letter-spacing: 0.5px;
+            text-align: center;
+            word-break: keep-all;
+            white-space: nowrap;
+        }
+
+        .content {
+            padding: 5px 20px 5px 20px;
+            position: relative;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .watermark-container {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+            opacity: 0.06;
+            pointer-events: none;
+            width: 70%;
+            height: 70%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .watermark-logo {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        .top-section {
+            display: flex;
+            flex-direction: row-reverse;
+            gap: 10px;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+            flex-shrink: 0;
+        }
+
+        .photo-box {
+            width: 75px;
+            height: 95px;
+            border: 2px solid #333;
+            background: #f8f8f8;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .photo-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .photo-input {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .photo-preview {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        .fields-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding-top: 1px;
+        }
+
+        .field-row {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            width: 100%;
+        }
+
+        .field-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #333;
+            white-space: nowrap;
+            word-break: keep-all;
+        }
+
+        .field-input {
+            border: 2px solid #333;
+            background: white;
+            padding: 2px 5px;
+            font-family: 'Cairo', sans-serif;
+            border-radius: 7px;
+            font-size: 14px;
+            height: 28px;
+            text-align: center;
+            word-break: keep-all;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .field-input:focus {
+            outline: none;
+            border-color: #2a3d5a;
+        }
+
+        .row-fullname .field-input, .row-department .field-input {
+            flex: 1;
+            width: auto;
+        }
+
+        .row-job-mobile {
+            display: flex;
+            gap: 12px;
+        }
+
+        .job-group, .mobile-group {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            flex: 1;
+        }
+
+        .job-group .field-input, .mobile-group .field-input {
+            flex: 1;
+            width: auto;
+        }
+
+        .vehicle-row {
+            display: flex;
+            gap: 2px;
+            border-radius: 6px;
+            margin: 4px 0;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .vehicle-group {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            flex: 1;
+        }
+
+        .vehicle-group .field-label {
+            font-size: 10px;
+            word-break: keep-all;
+        }
+
+        .vehicle-group .field-input {
+            flex: 1;
+            height: 22px;
+            min-width: 45px;
+            border-radius: 8px;
+            font-size: 10px;
+            text-align: center;
+            word-break: keep-all;
+        }
+
+        .chassis-row {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin: 6px 0;
+            flex-shrink: 0;
+        }
+
+        .chassis-row .field-input {
+            flex: 1;
+            width: auto;
+        }
+
+        .auth-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 6px 0;
+            padding: 2px 0;
+            flex-shrink: 0;
+        }
+
+        .auth-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: #333;
+            word-break: keep-all;
+        }
+
+        .auth-options {
+            display: flex;
+            gap: 15px;
+        }
+
+        .auth-option {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .auth-option input[type="checkbox"] {
+            width: 14px;
+            height: 14px;
+            border: 2px solid #333;
+            cursor: pointer;
+        }
+
+        .auth-option label {
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            word-break: keep-all;
+        }
+
+        .notice-section {
+            width: 95%;
+            margin: 4px auto 4px auto;
+            flex-shrink: 0;
+        }
+
+        .notice-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: #333;
+            text-align: center;
+            margin-bottom: 2px;
+            word-break: keep-all;
+            unicode-bidi: normal;
+            direction: rtl;
+        }
+
+        .notice-label strong {
+            font-weight: 800;
+        }
+
+        .scope-input {
+            width: 100%;
+            height: 24px;
+            border: 2px solid #333;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 600;
+            background: white;
+            word-break: keep-all;
+            display: block;
+        }
+
+        .signatures-row {
+            display: flex;
+            gap: 14px;
+            border-radius: 8px;
+            margin: 6px auto;
+            flex-shrink: 0;
+            width: 85%;
+        }
+
+        .signature-box {
+            flex: 1;
+            border: 2px solid #666;
+            min-height: 90px;
+            padding: 5px;
+            background: transparent;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border-radius: 6px;
+            position: relative;
+        }
+
+        .signature-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-align: center;
+            color: #333;
+            line-height: 1.2;
+            unicode-bidi: normal;
+            direction: rtl;
+            background: rgba(255,255,255,0.7);
+            padding: 1px 4px;
+            border-radius: 8px;
+            display: inline-block;
+            word-break: keep-all;
+        }
+
+        .full-signature {
+            min-height: 90px;
+            padding: 5px;
+            margin: 8px auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 42%;
+            border-radius: 8px;
+            flex-shrink: 0;
+            background: transparent;
+            border: 2px solid #666;
+        }
+
+        .requirements {
+            margin-top: 6px;
+            padding: 3px 0;
+            flex-shrink: 0;
+            margin-bottom: 0;
+        }
+
+        .requirements-title {
+            font-size: 13px;
+            font-weight: 800;
+            margin-bottom: 2px;
+            color: #333;
+            text-align: right;
+            word-break: keep-all;
+        }
+
+        .requirements ol {
+            padding: 0;
+            margin: 0;
+            font-size: 13px;
+            line-height: 1.3;
+            color: #333;
+            list-style: none;
+            counter-reset: item;
+        }
+
+        .requirements li {
+            margin-bottom: 2px;
+            text-align: right;
+            position: relative;
+            padding-right: 20px;
+            counter-increment: item;
+            unicode-bidi: normal;
+            direction: rtl;
+            word-break: keep-all;
+        }
+
+        .requirements li::before {
+            content: counter(item) "-";
+            position: absolute;
+            right: 0;
+            font-weight: 700;
+        }
+
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 20px;
+            font-size: 8px;
+            color: #666;
+            border-top: 1px solid #ddd;
+            flex-shrink: 0;
+            margin-top: 0;
+        }
+
+        .form-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            padding: 10px;
+        }
+
+        .form-btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 25px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .form-btn-print {
+            background: #5a6a7a;
+            color: white;
+        }
+
+        .form-btn-print:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+            }
+            .contact-section {
+                display: none !important;
+            }
+            .form-display-title {
+                display: none !important;
+            }
+            .form-display-section {
+                display: block !important;
+                margin: 0;
+            }
+            .form-container {
+                box-shadow: none;
+                width: 190mm;
+                height: 277mm;
+                min-height: 277mm;
+                max-height: 277mm;
+                margin: 10mm auto;
+                page-break-after: avoid;
+                page-break-inside: avoid;
+                overflow: hidden;
+            }
+            html, body {
+                height: 277mm;
+                overflow: hidden;
+            }
+            .form-controls {
+                display: none !important;
+            }
+            .content {
+                height: auto;
+                overflow: hidden;
+                padding: 10px 20px 5px 20px;
+            }
+            .footer {
+                position: relative;
+                margin-top: 0;
+                padding: 4px 20px;
+            }
+            .signatures-row, .requirements {
+                page-break-inside: avoid;
+            }
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            .form-title h1 {
+                text-align: center !important;
+            }
+        }
+    
+        /* Hide page title when printing */
+        @media print {
+            title {
+                display: none !important;
+            }
+            head {
+                display: none !important;
+            }
+        }
+    </style>
+<base target="_blank">
+</head>
+<body>
+    <!-- ===== CONTACT FORM SECTION ===== -->
+    <div class="contact-section" id="contactSection">
+        <div class="contact-header">
+            <h2>منح تخويل عجلات </h2>
+            <p>استمارة منح تخويل عجلات الموظفين - وزارة الشباب والرياضة</p>
+        </div>
+
+        <form id="contactForm">
+            <div class="section-title">المعلومات الشخصية</div>
+
+            <div class="form-group">
+                <label for="fullname">اسم الرباعي واللقب *</label>
+                <input type="text" id="fullname" placeholder="أدخل الاسم الكامل" required>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="department">اسم الدائرة *</label>
+                    <input type="text" id="department" placeholder="اسم الدائرة" required>
+                </div>
+                <div class="form-group">
+                    <label for="jobtitle">العنوان الوظيفي *</label>
+                    <input type="text" id="jobtitle" placeholder="المنصب" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="mobile">رقم الموبايل *</label>
+                <input type="tel" id="mobile" placeholder="07xx xxx xxxx" required>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="section-title">معلومات المركبة</div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="vehicleType">نوع العجلة *</label>
+                    <input type="text" id="vehicleType" placeholder="مثال: تويوتا" required>
+                </div>
+                <div class="form-group">
+                    <label for="vehicleColor">لون العجلة *</label>
+                    <input type="text" id="vehicleColor" placeholder="مثال: أبيض" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="vehicleYear">سنة الصنع *</label>
+                    <input type="text" id="vehicleYear" placeholder="2024" required>
+                </div>
+                <div class="form-group">
+                    <label for="vehicleNumber">رقم العجلة *</label>
+                    <input type="text" id="vehicleNumber" placeholder="رقم اللوحة" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="chassisNumber">رقم الشاصي *</label>
+                <input type="text" id="chassisNumber" placeholder="رقم الشاصي" required>
+            </div>
+
+            <div class="form-group">
+                <label>نوع تخويل العجلة *</label>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="authGovt" value="govt">
+                        <label for="authGovt">حكومي</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="authPrivate" value="private">
+                        <label for="authPrivate">خصوصي</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary" onclick="fillForm()">📋 ملء الاستمارة</button>
+                <button type="button" class="btn btn-success" onclick="fillAndPrint()">🖨️ ملء وطباعة</button>
+                <button type="button" class="btn btn-secondary" onclick="clearForm()">🗑️ مسح</button>
+            </div>
+
+            <div class="success-message" id="successMsg">
+                ✅ تم ملء الاستمارة بنجاح! يمكنك التمرير للأسفل لرؤيتها.
+            </div>
+        </form>
+    </div>
+
+    <!-- ===== FORM DISPLAY SECTION (Hidden initially) ===== -->
+    <div class="form-display-section" id="formDisplaySection">
+        <div class="form-display-title">📄 الاستمارة المملوءة</div>
+
+        <div class="form-container" id="form">
+            <div class="header">
+                <div class="header-en">
+                    <div>Republic Of Iraq</div>
+                    <div>Ministry Of Youth & Sport</div>
+                    <div>Minister Office</div>
+                    <div>Security Permits Department</div>
+                </div>
+
+                <div class="logo-container">
+                    <img src="imag.jpg" alt="Logo" class="logo-img">
+                </div>
+
+                <div class="header-ar">
+                    <div>جمهورية العراق</div>
+                    <div>وزارة الشباب والرياضة</div>
+                    <div>مكتب الوزير</div>
+                    <div>قسم التصاريح الامنية</div>
+                </div>
+            </div>
+
+            <div class="form-title">
+                <h1>استمارة منح تخويل عجلات الموظفين</h1>
+            </div>
+
+            <div class="content">
+                <div class="watermark-container">
+                    <img src="imag.jpg" alt="" class="watermark-logo">
+                </div>
+
+                <div class="top-section">
+                    <div class="photo-box">
+                        <div class="photo-label">صورة شخصية</div>
+                        <input type="file" class="photo-input" accept="image/*" onchange="loadPhoto(this)">
+                        <img class="photo-preview" id="photoPreview">
+                    </div>
+
+                    <div class="fields-area">
+                        <div class="field-row row-fullname">
+                            <label class="field-label">اسم الرباعي واللقب</label>
+                            <input type="text" class="field-input" id="field-fullname">
+                        </div>
+
+                        <div class="field-row row-department">
+                            <label class="field-label">اسم الدائرة</label>
+                            <input type="text" class="field-input" id="field-department">
+                        </div>
+
+                        <div class="row-job-mobile">
+                            <div class="job-group">
+                                <label class="field-label">العنوان الوظيفي</label>
+                                <input type="text" class="field-input" id="field-jobtitle">
+                            </div>
+                            <div class="mobile-group">
+                                <label class="field-label">رقم الموبايل</label>
+                                <input type="text" class="field-input" id="field-mobile">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="vehicle-row">
+                    <div class="vehicle-group">
+                        <label class="field-label">نوع العجلة</label>
+                        <input type="text" class="field-input" id="field-vehicleType">
+                    </div>
+                    <div class="vehicle-group">
+                        <label class="field-label">لون العجلة</label>
+                        <input type="text" class="field-input" id="field-vehicleColor">
+                    </div>
+                    <div class="vehicle-group">
+                        <label class="field-label">سنة الصنع</label>
+                        <input type="text" class="field-input" id="field-vehicleYear">
+                    </div>
+                    <div class="vehicle-group">
+                        <label class="field-label">رقم العجلة</label>
+                        <input type="text" class="field-input" id="field-vehicleNumber">
+                    </div>
+                </div>
+
+                <div class="chassis-row">
+                    <label class="field-label">رقم الشاصي</label>
+                    <input type="text" class="field-input" id="field-chassisNumber">
+                </div>
+
+                <div class="auth-section">
+                    <label class="auth-label">نوع تخويل العجـــلـــــة </label>
+                    <div class="auth-options">
+                        <div class="auth-option">
+                            <input type="checkbox" id="govt" onclick="toggleAuth('govt')">
+                            <label for="govt">حكومي</label>
+                        </div>
+                        <div class="auth-option">
+                            <input type="checkbox" id="private" onclick="toggleAuth('private')">
+                            <label for="private">خصوصي</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="notice-section">
+                    <div class="notice-label">
+                        <strong>ملاحظة:</strong> نطاق سير العجلة الحكومية ونوع الواجب والمهام يتم تحديده من قبل (مديرعام الدائرة المعنية وبالقلم الخاص بالتوقيع)
+                    </div>
+                    <input type="text" class="scope-input" placeholder="=" readonly>
+                </div>
+
+                <div class="signatures-row">
+                    <div class="signature-box">
+                        <div class="signature-title">توقيع  صاحب  الطلب</div>
+                        <div class="signature-line"></div>
+                    </div>
+                    <div class="signature-box">
+                        <div class="signature-title">ختم وتوقيع مديرعام دائرة الموظف</div>
+                        <div class="signature-line"></div>
+                    </div>
+                </div>
+
+                <div class="signatures-row">
+                    <div class="signature-box">
+                        <div class="signature-title">ختم  وتوقيع  شعبة  الاليات العجلة  الحكومية</div>
+                        <div class="signature-line"></div>
+                    </div>
+                    <div class="signature-box">
+                        <div class="signature-title">ختم وتوقيع مدير قسم التصاريح الامنية</div>
+                        <div class="signature-line"></div>
+                    </div>
+                </div>
+
+                <div class="full-signature">
+                    <div class="signature-title">توقيع مسؤول شعبة التصاريح</div>
+                    <div class="signature-line"></div>
+                </div>
+
+                <div class="requirements">
+                    <div class="requirements-title"> :ملاحظات</div>
+                    <ol>
+                        <li>ارفاق نسخه مصورة ملونة لكل من(هوية دائرة الموظف  + محضر استلام العجلة + سنوية العجلة).</li>
+                        <li>سوف يهمل طلب التخويل في حالة عدم ارفاق اي نسخه مذكورة في فقرة رقم (١) او في حالة نقص في توقيع الطلب.</li>
+                        <li>يكون استلام استمارة طلب التخويل من مكتب التصاريح الامنية حصراً.</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="footer">
+                <span>SPO-QP-03-03,01-27 JAN.2023</span>
+                <span>HS\m//R</span>
+            </div>
+        </div>
+
+        <div class="form-controls">
+            <button class="form-btn form-btn-print" onclick="exportPDF()">🖨️ طباعة</button>
+        </div>
+    </div>
+
+    <!-- Firebase SDK (Version 8) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <script>
+        // === إعدادات فايربيس (Firebase Configuration) ===
+        // يرجى استبدال هذه القيم ببيانات مشروعك من منصة Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyCYtmKAlvEY3XMfGetSHzHkAnD5u1ibf2Y",
+            authDomain: "takhajalat.firebaseapp.com",
+            databaseURL: "https://takhajalat-default-rtdb.firebaseio.com",
+            projectId: "takhajalat",
+            storageBucket: "takhajalat.firebasestorage.app",
+            messagingSenderId: "622058465312",
+            appId: "1:622058465312:web:6c15275f6ff79b1d8eb445",
+            measurementId: "G-HT806PEC42"
+        };
+
+        // تهيئة تطبيق فايربيس وقاعدة البيانات
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Toggle checkboxes in contact form
+        document.getElementById('authGovt').addEventListener('change', function() {
+            if (this.checked) document.getElementById('authPrivate').checked = false;
+        });
+        document.getElementById('authPrivate').addEventListener('change', function() {
+            if (this.checked) document.getElementById('authGovt').checked = false;
+        });
+
+        function validateForm() {
+            const requiredFields = ['fullname', 'department', 'jobtitle', 'mobile', 
+                                   'vehicleType', 'vehicleColor', 'vehicleYear', 
+                                   'vehicleNumber', 'chassisNumber'];
+
+            let isValid = true;
+            requiredFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (!field.value.trim()) {
+                    field.style.borderColor = '#dc3545';
+                    isValid = false;
+                } else {
+                    field.style.borderColor = '#ddd';
+                }
+            });
+
+            if (!isValid) {
+                alert('يرجى ملء جميع الحقول المطلوبة (المميزة بـ *)');
+                return false;
+            }
+
+            const authGovt = document.getElementById('authGovt').checked;
+            const authPrivate = document.getElementById('authPrivate').checked;
+
+            if (!authGovt && !authPrivate) {
+                alert('يرجى اختيار نوع التخويل (حكومي أو خصوصي)');
+                return false;
+            }
+
+            return true;
+        }
+
+        function fillForm() {
+            if (!validateForm()) return;
+
+            // Show the form section
+            const formSection = document.getElementById('formDisplaySection');
+            formSection.classList.add('active');
+
+            // Fill the form fields
+            document.getElementById('field-fullname').value = document.getElementById('fullname').value;
+            document.getElementById('field-department').value = document.getElementById('department').value;
+            document.getElementById('field-jobtitle').value = document.getElementById('jobtitle').value;
+            document.getElementById('field-mobile').value = document.getElementById('mobile').value;
+            document.getElementById('field-vehicleType').value = document.getElementById('vehicleType').value;
+            document.getElementById('field-vehicleColor').value = document.getElementById('vehicleColor').value;
+            document.getElementById('field-vehicleYear').value = document.getElementById('vehicleYear').value;
+            document.getElementById('field-vehicleNumber').value = document.getElementById('vehicleNumber').value;
+            document.getElementById('field-chassisNumber').value = document.getElementById('chassisNumber').value;
+
+            // Fill checkboxes in the displayed form
+            document.getElementById('govt').checked = document.getElementById('authGovt').checked;
+            document.getElementById('private').checked = document.getElementById('authPrivate').checked;
+
+            // تجهيز البيانات للحفظ في فايربيس
+            const formData = {
+                fullname: document.getElementById('fullname').value,
+                department: document.getElementById('department').value,
+                jobtitle: document.getElementById('jobtitle').value,
+                mobile: document.getElementById('mobile').value,
+                vehicleType: document.getElementById('vehicleType').value,
+                vehicleColor: document.getElementById('vehicleColor').value,
+                vehicleYear: document.getElementById('vehicleYear').value,
+                vehicleNumber: document.getElementById('vehicleNumber').value,
+                chassisNumber: document.getElementById('chassisNumber').value,
+                authType: authGovt ? 'حكومي' : 'خصوصي',
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            };
+
+            // حفظ البيانات في قاعدة بيانات فايربيس (Realtime Database)
+            database.ref('form_submissions').push(formData)
+                .then(() => {
+                    console.log('تم الحفظ في فايربيس بنجاح');
+                    // Show success message
+                    document.getElementById('successMsg').style.display = 'block';
+                })
+                .catch((error) => {
+                    console.error('خطأ في حفظ البيانات:', error);
+                    alert('حدث خطأ أثناء حفظ البيانات في السيرفر. يرجى التأكد من إعدادات فايربيس.');
+                    document.getElementById('successMsg').style.display = 'block'; // نعرض الرسالة حتى لو فشل الحفظ لكي يتمكن من الطباعة
+                });
+
+            // Scroll to the form
+            setTimeout(() => {
+                formSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 300);
+        }
+
+        function fillAndPrint() {
+            fillForm();
+
+            // Wait for form to be filled then print
+            setTimeout(() => {
+                document.querySelector('.contact-section').style.display = 'none';
+                document.querySelector('.form-display-title').style.display = 'none';
+                document.querySelector('.form-controls').style.display = 'none';
+                window.print();
+
+                // Restore after print
+                setTimeout(() => {
+                    document.querySelector('.contact-section').style.display = 'block';
+                    document.querySelector('.form-display-title').style.display = 'block';
+                    document.querySelector('.form-controls').style.display = 'flex';
+                }, 1000);
+            }, 800);
+        }
+
+        function clearForm() {
+            if (confirm('هل أنت متأكد من مسح جميع البيانات؟')) {
+                document.getElementById('contactForm').reset();
+                document.getElementById('successMsg').style.display = 'none';
+                document.getElementById('formDisplaySection').classList.remove('active');
+
+                document.querySelectorAll('.contact-section input[type="text"], .contact-section input[type="tel"]').forEach(input => {
+                    input.style.borderColor = '#ddd';
+                });
+            }
+        }
+
+        function loadPhoto(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('photoPreview').src = e.target.result;
+                    document.getElementById('photoPreview').style.display = 'block';
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function toggleAuth(type) {
+            if (type === 'govt') {
+                document.getElementById('private').checked = false;
+            } else {
+                document.getElementById('govt').checked = false;
+            }
+        }
+
+        function exportPDF() {
+            document.querySelector('.contact-section').style.display = 'none';
+            document.querySelector('.form-display-title').style.display = 'none';
+            document.querySelector('.form-controls').style.display = 'none';
+
+            window.print();
+
+            setTimeout(() => {
+                document.querySelector('.contact-section').style.display = 'block';
+                document.querySelector('.form-display-title').style.display = 'block';
+                document.querySelector('.form-controls').style.display = 'flex';
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم الاستمارات - تخويل العجلات</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #f8fafc; color: #0f172a; }
+        .custom-scroll::-webkit-scrollbar { width:6px; height:6px; }
+        .custom-scroll::-webkit-scrollbar-track { background:#f8fafc; }
+        .custom-scroll::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:4px; }
+        .custom-scroll::-webkit-scrollbar-thumb:hover { background:#94a3b8; }
+
+        /* A4 Paper Styles from index.html */
+        @page {
+            size: A4;
+            margin: 10mm;
+        }
+
+        .form-container {
+            width: 190mm;
+            min-height: 277mm;
+            max-height: 277mm;
+            background: white;
+            position: relative;
+            box-shadow: 0 0 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+            padding: 0;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            direction: rtl;
+        }
+
+        .form-container * { box-sizing: border-box; }
+
+        .header {
+            background: linear-gradient(180deg, #4a5d7a 0%, #3a4d6a 50%, #2a3d5a 100%);
+            height: 90px;
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 8px 15px;
+            position: relative;
+            border-bottom: 3px solid #8b1538;
+            border-radius: 0 0 12px 12px;
+            margin: 0 2px;
+            flex-shrink: 0;
+        }
+
+        .header-en { text-align: left; line-height: 1.3; z-index: 2; direction: ltr; }
+        .header-en div { font-size: 11px; font-weight: 600; letter-spacing: 0.3px; color: white; }
+        .header-ar { text-align: right; line-height: 1.3; z-index: 2; direction: rtl; }
+        .header-ar div { font-size: 12px; font-weight: 700; color: white; }
+
+        .logo-container {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 8px;
+            z-index: 10;
+        }
+
+        .logo-img {
+            width: 70px;
+            height: 70px;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+        .form-title {
+            text-align: center;
+            padding: 2px;
+            margin: 1px 15px 2px 15px;
+            border-bottom: 2px solid #ccc;
+            flex-shrink: 0;
+        }
+
+        .form-title h1 {
+            font-size: 15px;
+            font-weight: 800;
+            color: #333;
+            letter-spacing: 0.5px;
+            text-align: center;
+        }
+
+        .content {
+            padding: 5px 20px 5px 20px;
+            position: relative;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .watermark-container {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+            opacity: 0.06;
+            pointer-events: none;
+            width: 70%;
+            height: 70%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .watermark-logo {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .top-section {
+            display: flex;
+            flex-direction: row-reverse;
+            gap: 10px;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+            flex-shrink: 0;
+        }
+
+        .photo-box {
+            width: 75px;
+            height: 95px;
+            border: 2px solid #333;
+            background: #f8f8f8;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .photo-label { font-size: 10px; font-weight: 700; color: #333; }
+
+        .fields-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding-top: 1px;
+        }
+
+        .field-row {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            width: 100%;
+        }
+
+        .field-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #333;
+            white-space: nowrap;
+        }
+
+        .field-input {
+            border: 2px solid #333;
+            background: white;
+            padding: 2px 5px;
+            font-family: 'Cairo', sans-serif;
+            border-radius: 7px;
+            font-size: 14px;
+            height: 28px;
+            text-align: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+        }
+
+        .row-fullname .field-input, .row-department .field-input { flex: 1; width: auto; }
+
+        .row-job-mobile { display: flex; gap: 12px; }
+        .job-group, .mobile-group { display: flex; align-items: center; gap: 2px; flex: 1; }
+        .job-group .field-input, .mobile-group .field-input { flex: 1; width: auto; }
+
+        .vehicle-row {
+            display: flex;
+            gap: 2px;
+            border-radius: 6px;
+            margin: 4px 0;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .vehicle-group { display: flex; align-items: center; gap: 2px; flex: 1; }
+        .vehicle-group .field-label { font-size: 10px; }
+        .vehicle-group .field-input { flex: 1; height: 22px; min-width: 45px; border-radius: 8px; font-size: 10px; text-align: center; }
+
+        .chassis-row { display: flex; align-items: center; gap: 5px; margin: 6px 0; flex-shrink: 0; }
+        .chassis-row .field-input { flex: 1; width: auto; }
+
+        .auth-section { display: flex; align-items: center; gap: 8px; margin: 6px 0; padding: 2px 0; flex-shrink: 0; }
+        .auth-label { font-size: 10px; font-weight: 700; color: #333; }
+        
+        .auth-options { display: flex; gap: 15px; }
+        .auth-option { display: flex; align-items: center; gap: 4px; }
+        .auth-option input[type="checkbox"] { width: 14px; height: 14px; border: 2px solid #333; pointer-events: none; }
+        .auth-option label { font-size: 12px; font-weight: 600; }
+
+        .notice-section { width: 95%; margin: 4px auto; flex-shrink: 0; }
+        .notice-label { font-size: 10px; font-weight: 700; color: #333; text-align: center; margin-bottom: 2px; }
+        .scope-input { width: 100%; height: 24px; border: 2px solid #333; text-align: center; font-size: 11px; background: white; }
+
+        .signatures-row {
+            display: flex;
+            gap: 14px;
+            border-radius: 8px;
+            margin: 6px auto;
+            flex-shrink: 0;
+            width: 85%;
+        }
+
+        .signature-box {
+            flex: 1;
+            border: 2px solid #666;
+            min-height: 90px;
+            padding: 5px;
+            background: transparent;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border-radius: 6px;
+        }
+
+        .signature-title { font-size: 11px; font-weight: 700; text-align: center; color: #333; line-height: 1.2; background: rgba(255,255,255,0.7); padding: 1px 4px; border-radius: 8px; display: inline-block; }
+
+        .full-signature {
+            min-height: 90px;
+            padding: 5px;
+            margin: 8px auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 42%;
+            border-radius: 8px;
+            flex-shrink: 0;
+            border: 2px solid #666;
+        }
+
+        .requirements { margin-top: 6px; padding: 3px 0; flex-shrink: 0; margin-bottom: 0; }
+        .requirements-title { font-size: 13px; font-weight: 800; margin-bottom: 2px; color: #333; text-align: right; }
+        .requirements ol { padding: 0; margin: 0; font-size: 13px; line-height: 1.3; color: #333; list-style: none; counter-reset: item; }
+        .requirements li { margin-bottom: 2px; text-align: right; position: relative; padding-right: 20px; counter-increment: item; }
+        .requirements li::before { content: counter(item) "-"; position: absolute; right: 0; font-weight: 700; }
+
+        .footer { display: flex; justify-content: space-between; padding: 4px 20px; font-size: 8px; color: #666; border-top: 1px solid #ddd; flex-shrink: 0; margin-top: 0; }
+
+        @media print {
+            body * { visibility: hidden; }
+            #form-details-modal, #form-details-modal * { visibility: visible; }
+            #form-details-modal { position: absolute; left: 0; top: 0; width: 100%; background: white; }
+            .form-container { box-shadow: none; margin: 0 auto; page-break-after: avoid; page-break-inside: avoid; }
+            button, .fa-xmark { display: none !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-6 min-h-screen">
+
+    <!-- Header -->
+    <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 pb-4 bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
+        <div class="flex items-center gap-3">
+            <div class="bg-amber-50 p-2.5 rounded-xl border border-amber-100">
+                <i class="fa-solid fa-file-signature text-2xl text-amber-600"></i>
+            </div>
+            <div>
+                <h1 class="text-2xl font-bold tracking-tight text-slate-800">لوحة تحكم استمارات تخويل العجلات</h1>
+                <p class="text-sm text-slate-500 mt-0.5">متابعة وعرض طلبات تخويل عجلات الموظفين بشكل مباشر</p>
+            </div>
+        </div>
+        <div class="flex items-center flex-wrap gap-2 w-full md:w-auto">
+            <div id="sync-badge" class="bg-amber-50 border border-amber-200 text-amber-700 text-xs font-bold px-3 py-2 rounded-xl flex items-center gap-1.5">
+                <i class="fa-solid fa-spinner fa-spin text-amber-500"></i>
+                جاري الاتصال...
+            </div>
+            <div class="bg-amber-100 text-amber-800 border border-amber-200 rounded-xl px-3 py-2 text-sm font-bold shadow-sm">
+                عدد الاستمارات: <span id="forms-count-badge">0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Table -->
+    <main class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+        <div class="overflow-x-auto custom-scroll border border-slate-100 rounded-xl shadow-sm">
+            <table class="w-full text-right text-sm">
+                <thead>
+                    <tr class="text-slate-600 font-bold border-b border-slate-200 bg-slate-50/70 text-xs">
+                        <th class="px-4 py-3.5">ت</th>
+                        <th class="px-4 py-3.5">تاريخ التقديم</th>
+                        <th class="px-4 py-3.5">الاسم الرباعي واللقب</th>
+                        <th class="px-4 py-3.5">الدائرة</th>
+                        <th class="px-4 py-3.5">نوع العجلة</th>
+                        <th class="px-4 py-3.5">رقم الموبايل</th>
+                        <th class="px-4 py-3.5 text-center">التفاصيل</th>
+                    </tr>
+                </thead>
+                <tbody id="forms-table-body" class="divide-y divide-slate-100">
+                    <tr><td colspan="7" class="text-center py-6 text-slate-400">جاري تحميل الاستمارات...</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="forms-no-data" class="hidden text-center py-12 text-slate-400 font-semibold bg-slate-50/30 rounded-xl mt-4 border border-dashed border-slate-200">
+            <i class="fa-solid fa-folder-open text-3xl mb-2 text-slate-300 block"></i>
+            لا توجد استمارات واردة حالياً.
+        </div>
+    </main>
+
+    <!-- Form Details Modal -->
+    <div id="form-details-modal" class="fixed inset-0 z-50 hidden flex justify-center items-center p-4">
+        <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onclick="closeModal()"></div>
+        <div class="relative bg-white border border-slate-100 rounded-2xl w-full max-w-4xl max-h-[92vh] overflow-y-auto custom-scroll shadow-2xl z-10 flex flex-col">
+            <div class="flex justify-between items-center p-5 border-b border-amber-100 bg-amber-50/40 sticky top-0 z-50">
+                <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-list-check text-amber-600"></i>
+                    تفاصيل الاستمارة
+                </h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-700 transition-colors p-1.5 rounded-lg hover:bg-slate-100">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="p-6 flex justify-center bg-gray-100" id="modal-content">
+                <!-- Content injected via JS -->
+            </div>
+            
+            <div class="p-5 border-t border-slate-100 bg-slate-50 flex justify-end">
+                <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 transition-colors">
+                    <i class="fa-solid fa-print"></i>
+                    طباعة التفاصيل
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK - Using Realtime Database (Version 8 Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <script>
+        // ======= إعدادات فايربيس الخاصة بمشروعك (takhajalat) =======
+        const firebaseConfig = {
+            apiKey: "AIzaSyCYtmKAlvEY3XMfGetSHzHkAnD5u1ibf2Y",
+            authDomain: "takhajalat.firebaseapp.com",
+            databaseURL: "https://takhajalat-default-rtdb.firebaseio.com",
+            projectId: "takhajalat",
+            storageBucket: "takhajalat.firebasestorage.app",
+            messagingSenderId: "622058465312",
+            appId: "1:622058465312:web:6c15275f6ff79b1d8eb445"
+        };
+        // ========================================================
+
+        // تهيئة Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        let allSubmittedForms = [];
+
+        // Start listening to forms from Realtime Database
+        function startFormsSync() {
+            const syncBadge = document.getElementById('sync-badge');
+            
+            database.ref('form_submissions').on('value', (snapshot) => {
+                const forms = [];
+                snapshot.forEach(childSnapshot => {
+                    forms.push({
+                        id: childSnapshot.key,
+                        ...childSnapshot.val()
+                    });
+                });
+
+                // Sort by timestamp (newest first)
+                forms.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+                allSubmittedForms = forms;
+                document.getElementById('forms-count-badge').innerText = forms.length;
+                renderFormsTable(forms);
+
+                if (syncBadge) {
+                    syncBadge.innerHTML = '<i class="fa-solid fa-circle text-emerald-500 text-xs animate-pulse"></i> متصل';
+                    syncBadge.className = 'bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold px-3 py-2 rounded-xl flex items-center gap-1.5';
+                }
+            }, (error) => {
+                console.error('Database listener error:', error);
+                if (syncBadge) {
+                    syncBadge.innerHTML = '<i class="fa-solid fa-circle-exclamation text-red-500"></i> غير متصل';
+                    syncBadge.className = 'bg-red-50 border border-red-200 text-red-700 text-xs font-bold px-3 py-2 rounded-xl flex items-center gap-1.5';
+                }
+            });
+        }
+
+        // Render table
+        function renderFormsTable(forms) {
+            const tbody = document.getElementById('forms-table-body');
+            const noData = document.getElementById('forms-no-data');
+            tbody.innerHTML = '';
+
+            if (!forms || forms.length === 0) {
+                noData.classList.remove('hidden');
+                return;
+            }
+            noData.classList.add('hidden');
+
+            forms.forEach((form, idx) => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50 transition-colors cursor-pointer';
+                
+                let ts = 'غير متوفر';
+                if (form.timestamp) {
+                    ts = new Date(form.timestamp).toLocaleString('ar-IQ');
+                }
+                
+                const applicantName = form.fullname || '-';
+                const department = form.department || '-';
+                const vehicleType = form.vehicleType || '-';
+                const phone = form.mobile || '-';
+
+                tr.innerHTML = `
+                    <td class="px-4 py-3 font-bold text-slate-400 text-xs">${idx+1}</td>
+                    <td class="px-4 py-3 font-bold text-slate-600 text-xs" dir="ltr">${ts}</td>
+                    <td class="px-4 py-3 font-bold text-slate-800 text-xs">${applicantName}</td>
+                    <td class="px-4 py-3 text-slate-600 font-medium text-xs">${department}</td>
+                    <td class="px-4 py-3 text-amber-700 font-medium text-xs">${vehicleType}</td>
+                    <td class="px-4 py-3 text-slate-600 text-xs" dir="ltr">${phone}</td>
+                    <td class="px-4 py-3 text-center">
+                        <div class="flex justify-center gap-2">
+                            <button onclick="openFormDetails('${form.id}')" class="bg-white hover:bg-amber-50 text-amber-600 p-2 rounded-lg border border-slate-200 shadow-sm active:scale-95 transition-all" title="عرض التفاصيل">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                            <button onclick="deleteForm('${form.id}')" class="bg-white hover:bg-red-50 text-red-600 p-2 rounded-lg border border-slate-200 shadow-sm active:scale-95 transition-all" title="حذف الاستمارة">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Open Modal
+        function openFormDetails(formId) {
+            const form = allSubmittedForms.find(f => f.id === formId);
+            if (!form) return;
+
+            const modal = document.getElementById('form-details-modal');
+            const content = document.getElementById('modal-content');
+            
+            const val = (key) => form[key] || "";
+            const isGovt = form.authType === 'حكومي' ? 'checked' : '';
+            const isPrivate = form.authType === 'خصوصي' ? 'checked' : '';
+
+            const html = `
+            <div class="form-container">
+                <div class="header">
+                    <div class="header-en">
+                        <div>Republic Of Iraq</div>
+                        <div>Ministry Of Youth & Sport</div>
+                        <div>Minister Office</div>
+                        <div>Security Permits Department</div>
+                    </div>
+                    <div class="logo-container">
+                        <img src="imag.jpg" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+                    </div>
+                    <div class="header-ar">
+                        <div>جمهورية العراق</div>
+                        <div>وزارة الشباب والرياضة</div>
+                        <div>مكتب الوزير</div>
+                        <div>قسم التصاريح الامنية</div>
+                    </div>
+                </div>
+
+                <div class="form-title">
+                    <h1>استمارة منح تخويل عجلات الموظفين</h1>
+                </div>
+
+                <div class="content">
+                    <div class="watermark-container">
+                        <img src="imag.jpg" alt="" class="watermark-logo" onerror="this.style.display='none'">
+                    </div>
+
+                    <div class="top-section">
+                        <div class="photo-box">
+                            <div class="photo-label">صورة شخصية</div>
+                        </div>
+
+                        <div class="fields-area">
+                            <div class="field-row row-fullname">
+                                <label class="field-label">اسم الرباعي واللقب</label>
+                                <input type="text" class="field-input" value="${val('fullname')}" readonly>
+                            </div>
+
+                            <div class="field-row row-department">
+                                <label class="field-label">اسم الدائرة</label>
+                                <input type="text" class="field-input" value="${val('department')}" readonly>
+                            </div>
+
+                            <div class="row-job-mobile">
+                                <div class="job-group">
+                                    <label class="field-label">العنوان الوظيفي</label>
+                                    <input type="text" class="field-input" value="${val('jobtitle')}" readonly>
+                                </div>
+                                <div class="mobile-group">
+                                    <label class="field-label">رقم الموبايل</label>
+                                    <input type="text" class="field-input" value="${val('mobile')}" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="vehicle-row">
+                        <div class="vehicle-group">
+                            <label class="field-label">نوع العجلة</label>
+                            <input type="text" class="field-input" value="${val('vehicleType')}" readonly>
+                        </div>
+                        <div class="vehicle-group">
+                            <label class="field-label">لون العجلة</label>
+                            <input type="text" class="field-input" value="${val('vehicleColor')}" readonly>
+                        </div>
+                        <div class="vehicle-group">
+                            <label class="field-label">سنة الصنع</label>
+                            <input type="text" class="field-input" value="${val('vehicleYear')}" readonly>
+                        </div>
+                        <div class="vehicle-group">
+                            <label class="field-label">رقم العجلة</label>
+                            <input type="text" class="field-input" value="${val('vehicleNumber')}" readonly>
+                        </div>
+                    </div>
+
+                    <div class="chassis-row">
+                        <label class="field-label">رقم الشاصي</label>
+                        <input type="text" class="field-input" value="${val('chassisNumber')}" readonly>
+                    </div>
+
+                    <div class="auth-section">
+                        <label class="auth-label">نوع تخويل العجـــلـــــة </label>
+                        <div class="auth-options">
+                            <div class="auth-option">
+                                <input type="checkbox" ${isGovt}>
+                                <label>حكومي</label>
+                            </div>
+                            <div class="auth-option">
+                                <input type="checkbox" ${isPrivate}>
+                                <label>خصوصي</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="notice-section">
+                        <div class="notice-label">
+                            <strong>ملاحظة:</strong> نطاق سير العجلة الحكومية ونوع الواجب والمهام يتم تحديده من قبل (مديرعام الدائرة المعنية وبالقلم الخاص بالتوقيع)
+                        </div>
+                        <input type="text" class="scope-input" placeholder="=" readonly>
+                    </div>
+
+                    <div class="signatures-row">
+                        <div class="signature-box">
+                            <div class="signature-title">توقيع  صاحب  الطلب</div>
+                        </div>
+                        <div class="signature-box">
+                            <div class="signature-title">ختم وتوقيع مديرعام دائرة الموظف</div>
+                        </div>
+                    </div>
+
+                    <div class="signatures-row">
+                        <div class="signature-box">
+                            <div class="signature-title">ختم  وتوقيع  شعبة  الاليات العجلة  الحكومية</div>
+                        </div>
+                        <div class="signature-box">
+                            <div class="signature-title">ختم وتوقيع مدير قسم التصاريح الامنية</div>
+                        </div>
+                    </div>
+
+                    <div class="full-signature">
+                        <div class="signature-title">توقيع مسؤول شعبة التصاريح</div>
+                    </div>
+
+                    <div class="requirements">
+                        <div class="requirements-title"> :ملاحظات</div>
+                        <ol>
+                            <li>ارفاق نسخه مصورة ملونة لكل من(هوية دائرة الموظف  + محضر استلام العجلة + سنوية العجلة).</li>
+                            <li>سوف يهمل طلب التخويل في حالة عدم ارفاق اي نسخه مذكورة في فقرة رقم (١) او في حالة نقص في توقيع الطلب.</li>
+                            <li>يكون استلام استمارة طلب التخويل من مكتب التصاريح الامنية حصراً.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="footer">
+                    <span>SPO-QP-03-03,01-27 JAN.2023</span>
+                    <span>HS\\m//R</span>
+                </div>
+            </div>`;
+            
+            content.innerHTML = html;
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('form-details-modal').classList.add('hidden');
+        }
+
+        // Delete Form
+        function deleteForm(formId) {
+            if (confirm('هل أنت متأكد من أنك تريد حذف هذه الاستمارة نهائياً؟ لا يمكن التراجع عن هذا الإجراء.')) {
+                database.ref('form_submissions').child(formId).remove()
+                    .then(() => {
+                        console.log('تم حذف الاستمارة بنجاح');
+                    })
+                    .catch((error) => {
+                        console.error('خطأ أثناء الحذف:', error);
+                        alert('حدث خطأ أثناء محاولة حذف الاستمارة. يرجى المحاولة مرة أخرى.');
+                    });
+            }
+        }
+
+        // Start on load
+        window.addEventListener('DOMContentLoaded', () => {
+            startFormsSync();
+        });
+    </script>
+</body>
+</html>
